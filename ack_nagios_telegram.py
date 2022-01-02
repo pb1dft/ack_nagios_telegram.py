@@ -32,17 +32,18 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 import getopt, os, sys
 from daemonize import Daemonize
+from systemd import journal
 
 # For debuggin purpose only
 #from inspect import getmembers
 #from pprint import pprint
 
 # Enable logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
+logging.basicConfig( format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('ack_nagios_telegram')
+logger.addHandler(journal.JournaldLogHandler())
+logger.setLevel(logging.INFO)
 
 def usage():
     print('use -f to stay on foreground\n-h to print this help')
@@ -86,7 +87,9 @@ def acknowledge(update: Update, context: CallbackContext) -> None:
               comment = re.sub(r'!ack ', '', update.message.text)
               msg = "["+str(int(time.time())) + "] ACKNOWLEDGE_SVC_PROBLEM;"+host+";"+service+";2;1;0;"+user+";"+comment+"\n"
               #update.message.reply_text(msg)
-              print('Received message:\n'+msg+'Sending command to nagios\n')
+              logger.info('Received message:')
+              logger.info(msg)
+              logger.info('Sending command to nagios')
               file1 = open(command_file, "w")
               file1.write(msg)
               file1.close()
@@ -102,7 +105,9 @@ def acknowledge(update: Update, context: CallbackContext) -> None:
               user = str(update.effective_message.from_user.first_name)
               comment = re.sub(r'!ack ', '', update.message.text)
               msg = "["+str(int(time.time())) + "] ACKNOWLEDGE_HOST_PROBLEM;"+host+";1;1;0;"+user+";"+comment+"\n"
-              print('Received message:\n'+msg+'Sending command to nagios\n')
+              logger.info('Received message:')
+              logger.info(msg)
+              logger.info('Sending command to nagios')
               file1 = open(command_file, "w")
               file1.write(msg)
               file1.close()
@@ -160,4 +165,3 @@ if __name__ == '__main__':
     pidfile='%s/%s.pid' % (pid_dir,myname)       # any name
     daemon = Daemonize(app=myname,pid=pidfile, action=main)
     daemon.start()
-
