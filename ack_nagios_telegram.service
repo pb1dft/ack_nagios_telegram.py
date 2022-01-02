@@ -1,0 +1,18 @@
+[Unit]
+Description=Telegram bot to acknowledge nagios problems
+Documentation=https://github.com/pb1dft/ack_nagios_telegram.py
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/python3 <location_of_the_python_script>
+User=nagios
+Group=nagios
+Restart=on-failure
+SyslogIdentifier=nagios-telegram
+#RestartSec = 5
+#TimeoutStartSec = infinity
+PIDFile=/tmp/ack_nagios_telegram.py.pid
+
+[Install]
+WantedBy=multi-user.target
