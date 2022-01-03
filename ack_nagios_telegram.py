@@ -61,7 +61,11 @@ def start(update: Update, context: CallbackContext) -> None:
 def info(update: Update, context: CallbackContext) -> None:
    user = update.effective_user
    update.message.reply_text('Userid: '+str(user.id)+'\nUsername: '+user.username+'\nFirst name: '+user.first_name+'\nLast name: '+user.last_name)
-   
+
+def chatinfo(update: Update, context: CallbackContext) -> None:
+   chat = update.effective_chat
+   update.message.reply_text('Name: '+str(chat.title)+'\nChat id: '+str(chat.id))
+
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text('To acknowledge a problem, reply to the original problem message with !ack <comment>')
@@ -130,6 +134,7 @@ def main() -> None:
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("info", info))
+    dispatcher.add_handler(CommandHandler("chatinfo", chatinfo))
     dispatcher.add_handler(CommandHandler("help", help_command))
 
     # on non command i.e message - echo the message on Telegram
