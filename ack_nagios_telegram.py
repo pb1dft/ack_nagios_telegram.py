@@ -68,8 +68,7 @@ def chatinfo(update: Update, context: CallbackContext) -> None:
 
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
-    update.message.reply_text('To acknowledge a problem, reply to the original problem message with !ack <comment>')
-    update.message.reply_text('To get your telegram details type /info')
+    update.message.reply_text('To acknowledge a problem, reply to the original problem message with !ack <comment>\n/info to get your user details\n/chatinfo to get the current chat info')
 
 
 def acknowledge(update: Update, context: CallbackContext) -> None:
